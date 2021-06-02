@@ -1,0 +1,25 @@
+# 任意。お作法として指定
+AWSTemplateFormatVersion: "2010-09-09"
+​
+Parameters:
+  VpcName:
+    Type: String
+    # デフォルトに値を設定すると、コンソールで値が入力された状態になる
+    Default: "sample-vpc"
+​
+# スタックに含めるリソースを宣言
+Resources:
+  # Logical ID
+  # 他のリソースから参照する場合はこのIDを利用
+  SampleVPC:
+    # Resource type
+    # service-provider::service-name::data-type-name
+    Type: AWS::EC2::VPC
+    Properties:
+      # CIDRブロック
+      CidrBlock: 10.0.0.0/16
+      Tags:
+        # VPCの名前
+        - Key: Name
+          # ParametersのVpcNameを読み込む
+          Value: !Ref VpcName
