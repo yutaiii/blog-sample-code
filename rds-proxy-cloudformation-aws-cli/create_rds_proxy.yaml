@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  ProxyName:
+    Type: String
+    Default: <Proxyの名前>
+  ProxyTargetDBClusterIdentifiers:
+    Type: CommaDelimitedList
+  SecretReaderRoleArn:
+    Type: String
+    Default: <シークレットを参照できるIAM RoleのARN>
+  ProxySecretArn:
+    Type: String
+    Default: <接続情報用シークレットのARN>
+  SubnetIds:
+    Type: String
+    Default: <サブネットID1>,<サブネットID2>
+
+Resources:
+  TestDBProxy:
+    Type: AWS::RDS::DBProxy
+    Properties:
+      DebugLogging: false
+      DBProxyName: !Ref ProxyName
+      EngineFamily: MYSQL
+      IdleClientTimeout: 120
+      RequireTLS: false
+      RoleArn:
+        !Ref SecretReaderRoleArn
+      Auth:
+        - {AuthScheme: SECRETS, SecretArn: !Ref ProxySecretArn, IAMAuth: DISABLED}
+      VpcSubnetIds:
+        Fn::Split: [",", !Ref SubnetIds]
+  ProxyTargetGroup:
+    Type: AWS::RDS::DBProxyTargetGroup
+    Properties:
+      DBProxyName: !Ref TestDBProxy
+      # Proxyが接続するRDS Auroraクラスターの識別子
+      DBClusterIdentifiers: !Ref ProxyTargetDBClusterIdentifiers
+      TargetGroupName: default
+      ConnectionPoolConfigurationInfo:
+          MaxConnectionsPercent: 100
+          MaxIdleConnectionsPercent: 50
+          ConnectionBorrowTimeout: 120
