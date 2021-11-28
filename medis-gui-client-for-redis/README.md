@@ -1,4 +1,5 @@
 # ブログ用サンプルRedis環境
+ブログ記事は[こちら](https://ichi-station.com/medis-gui-client-for-redis/)
 
 ## 使い方
 
