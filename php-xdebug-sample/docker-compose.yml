@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  php-xdebug-sample:
+    build:
+      context: ./docker
+    container_name: php-xdebug-sample
+    stdin_open: true
+    tty: true
+    ports:
+      - '5000:80'
+    volumes:
+      - ./src:/var/www/html
+      - ./docker/php.ini:/usr/local/etc/php/php.ini
